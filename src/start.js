@@ -240,9 +240,7 @@ ipcMain.on('new-memo', (e, receivedData) => {
 
 //////// Memo Delete //////////
 ipcMain.on('delete-memo', (e, data) => {
-    console.log(data);
     const memoDeleteQuery = `DELETE FROM memos WHERE id='${data}'`
-    db.serialize();
     return db.each(memoDeleteQuery);
 })
 
@@ -280,9 +278,6 @@ ipcMain.on('share-user-email', (e, data) => {
 
 //////// Memo Share - insert user list //////////
 ipcMain.on('share-list-users', (e, data) => {
-    console.log('----------------------------')
-    console.log(data[1][0]);
-
     if (data[1].length > 1) {
         console.log(data[1].length);
         for(var i=0; i<data[1].length; i++) {
@@ -295,4 +290,11 @@ ipcMain.on('share-list-users', (e, data) => {
         db.each(insertShareUserQuery)
     }
 
+})
+
+
+//////// Memo Share - delete memo //////////
+ipcMain.on('delete-shared-memo', (e, data) => {
+    const deleteSharedMemoQuery = `DELETE FROM memo_share WHERE user_id=${data[0]} AND memo_id=${data[1]}`
+    return db.each(deleteSharedMemoQuery);
 })

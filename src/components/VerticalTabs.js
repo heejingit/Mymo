@@ -85,6 +85,8 @@ export default function VerticalTabs() {
   const [memos, setMemos] = React.useState([]);
   const [sharedMemos, setSharedMemos] = React.useState([]);
   const [memoId, setMemoId] = React.useState(0);
+  const [userId, setUserId] = React.useState(0);
+  const [sharedMemoId, setSharedMemoId] = React.useState(0);
   const [selectedTitle, setSelectedTitle] = React.useState("");
   const [selectedDesc, setSelectedDesc] = React.useState("");
   const [ownedBy, setOwnedBy] = React.useState(0);
@@ -121,6 +123,13 @@ export default function VerticalTabs() {
       window.location.reload();
     }
   }
+
+  const sharedMemodDelete = () => {
+    if (window.confirm("Are you sure to delete it?")) {
+      ipcRenderer.send('delete-shared-memo', [userId, sharedMemoId]);
+      window.location.reload();
+    }
+  }
   
   return (
     <div className={classes.root}>
@@ -137,7 +146,7 @@ export default function VerticalTabs() {
           return <Tab key={i} label={item.title} {...a11yProps(i)} onClick={() => {setMemoId(item.id); setSelectedTitle(item.title); setSelectedDesc(item.description); setOwnedBy(item.owned_by);} } />
         })}
         {sharedMemos.map(function(item, i) {
-          return <Tab key={i} label={item.title} {...a11yProps(i+100)} style={{color: "red"}}/>
+          return <Tab key={i} label={item.title} {...a11yProps(i+100)} onClick={() => {setUserId(item.user_id); setSharedMemoId(item.memo_id);}} style={{color: "red"}}/>
         })}
       </Tabs>
       <TabPanel value={value} index={0}>
@@ -234,8 +243,17 @@ export default function VerticalTabs() {
                     </Typography>
 
                     <Grid container className={classes.sharePanelOptions}>
-                      <Typography>
-                          Shared by {item.owner_email}
+                      <Button
+                          variant="contained"
+                          color="secondary"
+                          className={classes.button}
+                          startIcon={<DeleteIcon />}
+                          onClick={sharedMemodDelete}
+                        >
+                          Delete
+                      </Button>
+                      <Typography style={{ marginTop: 5 }}>
+                          Shared by <b>{item.owner_email}</b>
                       </Typography>
                       <Typography style={{ fontSize: 13, color: 'grey' }}>
                           You can't edit or share if you don't own this memo.

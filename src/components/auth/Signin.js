@@ -75,7 +75,6 @@ class SignIn extends React.Component {
     componentDidMount() {
         ipcRenderer.on('signedin', (e, data) => {                   // Receives data from the main window
             this.auth.setToken(data[1]);                            // Save the token into localStrage
-            ipcRenderer.send('prepare-memo', this.auth.parseJwt().email)
             return this.props.history.push({                        // Redirect to memo page
                 pathname: '/memo',
                 state: { email: data[0] }

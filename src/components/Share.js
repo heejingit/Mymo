@@ -99,7 +99,10 @@ class Share extends React.Component {
   handleShareSubmit = (e) => {
       e.preventDefault();
 
-      ipcRenderer.send('share-list-users', [this.state.memoId, this.state.userIdList])
+      if(window.confirm("Do you want to share with the list of the emails?")) {
+        ipcRenderer.send('share-list-users', [this.state.memoId, this.state.userIdList]);
+        return this.props.history.push('/memo');
+      }
   }
 
   render() {
