@@ -213,11 +213,16 @@ ipcMain.on('prepare-memo', (e, email) => {
             mainWindow.webContents.send('user-memos', memoData);
         })
 
-        const sharedMemoQuery = `SELECT memo_share.memo_id, memos.title, memos.description, memos.owned_by, memo_share.user_id FROM memos INNER JOIN memo_share ON memo_share.memo_id=memos.id WHERE memo_share.user_id=${data.id}`;
+        const sharedMemoQuery = `SELECT memo_share.memo_id, memos.title, memos.description, memos.owned_by, users.email as owner_email, memo_share.user_id 
+                                 FROM memos
+                                 INNER JOIN memo_share ON memo_share.memo_id=memos.id
+                                 INNER JOIN users ON memos.owned_by=users.id
+                                 WHERE memo_share.user_id=${data.id}`;
         db.each(sharedMemoQuery, (e, data) => {
             console.log(data)
             mainWindow.webContents.send('shared-memos', data);
         })
+
     })
 })
 

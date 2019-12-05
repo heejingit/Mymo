@@ -65,7 +65,13 @@ const useStyles = makeStyles(theme => ({
   },
   panelOptions: {
     marginTop: 200,
-  }
+  },
+  sharePanelOptions: {
+    marginTop: 200,
+    display: 'flex',
+    flexDirection: 'column',
+    textAlign: 'left'
+  },
 }));
 
 const auth = new Authentication();
@@ -126,7 +132,7 @@ export default function VerticalTabs() {
         aria-label="Vertical tabs example"
         className={classes.tabs}
       >
-      <Tab label={<AddCircleIcon color="primary"/>} {...a11yProps(1000)} />
+      <Tab label={<AddCircleIcon color="primary"/>} {...a11yProps(1000)} style={{ textAlign: 'left' }} />
         {memos.map(function(item, i) {
           return <Tab key={i} label={item.title} {...a11yProps(i)} onClick={() => {setMemoId(item.id); setSelectedTitle(item.title); setSelectedDesc(item.description); setOwnedBy(item.owned_by);} } />
         })}
@@ -226,6 +232,15 @@ export default function VerticalTabs() {
                     <Typography component="h3" variant="h5" className={classes.description}>
                         {item.description}
                     </Typography>
+
+                    <Grid container className={classes.sharePanelOptions}>
+                      <Typography>
+                          Shared by {item.owner_email}
+                      </Typography>
+                      <Typography style={{ fontSize: 13, color: 'grey' }}>
+                          You can't edit or share if you don't own this memo.
+                      </Typography>
+                    </Grid>
                  </TabPanel>
       })} 
     </div>
