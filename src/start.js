@@ -208,21 +208,17 @@ ipcMain.on('prepare-memo', (e, email) => {
     const userGetQuery = `SELECT  * FROM users WHERE users.email='${email}'`
     db.each(userGetQuery, (e, data) => {
         console.log(data)
-        const memoGetQuery = `SELECT * FROM memos WHERE owned_by='${data.id}'`
+        const memoGetQuery = `SELECT * FROM memos WHERE owned_by=${data.id}`
         db.all(memoGetQuery, (e, memoData) => {
             mainWindow.webContents.send('user-memos', memoData);
         })
 
-        const findSharedMemoQuery = `SELECT memo_id FROM memo_share WHERE user_id='${data.id}'`
-        db.each(findSharedMemoQuery, (e, data) => {
-            const getSharedMemoQuery = `SELECT * FROM memos WHERE id='${data.memo_id}'`;
-            db.each(getSharedMemoQuery, (e, data) => {
-                mainWindow.webContents.send('shared-memos', data);
-            })
+        const sharedMemoQuery = `SELECT memo_share.memo_id, memos.title, memos.description, memos.owned_by, memo_share.user_id FROM memos INNER JOIN memo_share ON memo_share.memo_id=memos.id WHERE memo_share.user_id=${data.id}`;
+        db.each(sharedMemoQuery, (e, data) => {
+            console.log(data)
+            mainWindow.webContents.send('shared-memos', data);
         })
     })
-
-    
 })
 
 
